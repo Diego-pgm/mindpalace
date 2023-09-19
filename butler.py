@@ -40,6 +40,11 @@ class Butler:
         res = self.cur.execute("SELECT name FROM sqlite_master")
         return res.fetchall()
 
+    def get_columns(self):
+        table_name = self.ask_table_name()
+        res = self.cur.execute("SELECT * from {}".format(table_name))
+        return table_name, [description[0] for description in res.description]
+
 butler = Butler('test.db')
 ques = input('Create new table? (y/n) ')
 if ques == "y":
@@ -49,4 +54,5 @@ if ques == "y":
         print(e)
 res = butler.get_tables()
 print('\nthe tables are: {}'.format(res))
-# Insert into a table 
+table_name, cols = butler.get_columns()
+print('The columns of {} are {}: '.format(table_name, cols))
