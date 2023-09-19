@@ -1,4 +1,5 @@
 import sqlite3
+import pandas as pd
 
 class Butler:
     def __init__(self, db):
@@ -23,23 +24,23 @@ class Butler:
         return cols
 
     def create_query(self, lst): 
-        statement = "("
+        query = "("
         for l in lst:
-            statement = statement + l + ','
-        statement = statement+')'
-        statement = statement[::-1].replace(',','',1)
-        statement = statement[::-1]
-        return statement
+            query = query + l + ','
+        query = query+')'
+        query = query[::-1].replace(',','',1)
+        query = query[::-1]
+        return query
 
     def create_table(self):
         name = self.ask_table_name()
         cols = self.ask_for_columns()
-        statement = "CREATE TABLE {} ".format(name)
+        query = "CREATE TABLE {} ".format(name)
         end_query = self.create_query(cols)
-        statement = statement+end_query
-        print(statement)
+        query = query+end_query
+        print(query)
         try:
-            self.cur.execute(statement)
+            self.cur.execute(query)
         except Exception as e:
             print(e)
 
@@ -64,15 +65,21 @@ class Butler:
             value = input('Insert value for {}: '.format(col))
             value = "'{}'".format(value)
             values.append(value)
-        statement = "INSERT INTO {} VALUES".format(table_name)
+        query = "INSERT INTO {} VALUES".format(table_name)
         end_query = self.create_query(values)
-        statement = statement + end_query
-        print(statement)
+        query = query + end_query
+        print(query)
         try:
-            self.cur.execute(statement)
+            self.cur.execute(query)
             self.con.commit()
+            self.get_values(table_name)
         except Exception as e:
             print(e)
+
+    def get_values(self, table_name):
+        query = "SELECT * FROM {}".format(table_name)
+        table = pd.read_sql(query, self.con)
+        print(table)
 
 butler = Butler('test.db')
 ques = input('Create new table? (y/n) ')
@@ -84,3 +91,5 @@ if ques == "y":
 #table_name, cols = butler.get_columns()
 #print('The columns of {} are {}: '.format(table_name, cols))
 butler.insert_into_table()
+table_name = butler.ask_table_name()
+butler.get_values(table_name)
