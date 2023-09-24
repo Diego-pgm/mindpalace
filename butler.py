@@ -81,15 +81,12 @@ class Butler:
         table = pd.read_sql(query, self.con)
         print(table)
 
-butler = Butler('test.db')
-ques = input('Create new table? (y/n) ')
-if ques == "y":
-    butler.create_table()
+
 
 #res = butler.get_tables()
 #print('\nthe tables are: {}'.format(res))
 #table_name, cols = butler.get_columns()
 #print('The columns of {} are {}: '.format(table_name, cols))
-butler.insert_into_table()
-table_name = butler.ask_table_name()
-butler.get_values(table_name)
+#butler.insert_into_table()
+#table_name = butler.ask_table_name()
+#butler.get_values(table_name)
